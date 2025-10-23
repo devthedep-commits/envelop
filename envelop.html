@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>I.C. FROST — The Frozen Letter</title>
+<style>
+  :root{
+    --bg:#050608; --card:#f7f3ec; --text:#616161; --muted:#7f8b8c; --accent:#7feaf6; --seal-red:#b22222;
+  }
+  html,body{}
+  body{
+    margin:0; font-family: "Courier New", monospace; background:linear-gradient(180deg,#020204 0%, #071015 60%); color:var(--text);
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .stage{max-width:900px; width:100%; margin-top: 200px;}
+
+  /* Envelope */
+  .envelope-wrap{display:flex; justify-content:center; margin-bottom:24px}
+  .envelope {
+    position: relative;
+    width: 520px;
+    height: 320px;
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: visible;
+    transition: transform 0.3s ease;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    background: var(--card);
+  }
+  .envelope:hover {
+    transform: scale(1.02);
+  }
+
+  /* Envelope base */
+  .envelope::before {
+    content: "";
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    background: var(--card);
+    border-radius: 6px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    z-index: 1;
+  }
+
+  /* Envelope flap */
+  .envelope::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 260px solid transparent;
+  border-right: 260px solid transparent;
+  border-top: 140px solid var(--card);
+  border-radius: 6px 6px 0 0;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+  transform-origin: top center;
+  transition: transform 0.6s ease;
+  z-index: 2;
+}
+.envelope.open::after {
+  transform: rotateX(150deg);
+  transform-origin: top center;
+}
+  }
+  .envelope.open::after {
+    transform: rotateX(-150deg);
+    box-shadow: none;
+  }
+
+  /* Seal */
+  .seal {
+    position: absolute;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 90px;
+    background: var(--seal-red);
+    border-radius: 50%;
+    box-shadow:
+      inset 0 4px 8px rgba(255, 255, 255, 0.3),
+      0 2px 5px rgba(0,0,0,0.3);
+    z-index: 3;
+  }
+  .envelope.open .seal {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .seal::before {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .envelope-title {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    color: #7feaf6;
+    letter-spacing: 2px;
+    background: rgba(0, 0, 0, 0.55);
+    padding: 6px 0;
+    font-family: "Courier New", monospace;
+    text-transform: uppercase;
+    z-index: 4;
+ 
+  }
+
+  /* open letter */
+  .letter-area{display:none; margin-top:8px}
+  .letter{background:linear-gradient(180deg,#071018,#0b1215); border-radius:6px; border:1px solid rgba(255,255,255,0.03); padding:28px; box-shadow:0 20px 40px rgba(0,0,0,0.6);}
+  .letter .meta{font-size:13px; color:var(--muted); margin-bottom:12px}
+  .letter .body{white-space:pre-wrap; line-height:1.5; color:var(--text); font-size:15px; min-height:260px;}
+
+  /* typewriter caret */
+  .caret{display:inline-block; width:10px; background:var(--text); margin-left:6px; animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* footer hint + lock */
+  .controls{display:flex; gap:12px; align-items:center; margin-top:18px}
+  .hint-line{color:var(--muted); font-size:13px}
+  .lockbox{margin-left:auto; display:flex; gap:8px; align-items:center}
+  .lockbox input{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--text); padding:8px 10px; border-radius:6px; width:160px}
+  .lockbox button{background:var(--accent); color:#021318; border:none; padding:9px 12px; border-radius:6px; cursor:pointer; font-weight:700}
+  .small{font-size:12px;color:var(--muted)}
+
+  /* subtle frost decoration */
+  .frost-line{height:1px;background:linear-gradient(90deg, transparent, rgba(127,234,246,0.06), transparent); margin:18px 0}
+
+  /* reveal animations */
+  .fade-in{animation:fadeIn 700ms ease both}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+</style>
+
+<style>
+/* Subtiel verborgen QR linksboven */
+body::after {
+  content: "";
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  width: 100px;
+  height: 100px;
+  background: url('images2/qrcode.png') no-repeat center/contain;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* QR zichtbaar alleen bij hover over hotspot */
+body.show-qr::after {
+  opacity: 0.8;
+}
+
+/* Hotspot exact over de QR-code */
+#qr-hotspot {
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  width: 100px;
+  height: 100px;
+  z-index: 1001;
+  background: transparent;
+  cursor: pointer;
+  /* geen rand, geen inhoud */
+}
+
+@media (max-width:640px){
+  .envelope{width:92%; height:260px}
+  .letter .body{min-height:180px}
+}
+</style>
+</head>
+<body>
+  <div id="qr-hotspot" tabindex="0" aria-label="Verborgen QR hotspot"></div>
+  <main class="stage">
+    <div class="envelope-wrap">
+      <div id="envelope" class="envelope" role="button" aria-pressed="false" tabindex="0">
+        <div class="seal" aria-hidden="true"></div>
+        <div class="envelope-title">I.C. FROST — THE FROZEN LETTER</div>
+      </div>
+    </div>
+
+    <div id="letterArea" class="letter-area fade-in">
+      <article class="letter" aria-live="polite">
+        <div class="meta">Noordersector — 24 december 2025</div>
+        <div id="letterBody" class="body"></div>
+        <div class="frost-line"></div>
+      </article>
+    </div>
+  </main>
+
+<script>
+// brieftekst (lange poëtische versie met hint-woorden).
+const fullText = `Ze zeggen dat tijd altijd vooruitgaat.
+Maar ik heb haar zien struikelen.
+
+In het uur vóór middernacht,
+toen de hemel kraakte als oud ijs,
+stopte de klok met ademen.
+
+Alles bevroor.
+Niet door de kou —
+maar door herinnering.
+
+Ik heb geprobeerd het te herstellen.
+De werkelijkheid, de stilte, mezelf.
+Maar sommige dingen laten zich niet lijmen.
+Ze moeten gevonden worden,
+stuk voor stuk — in wat nog licht is.
+
+Laag één — beeld.
+Zes reflecties vullen de kamer van mijn geheugen.
+Wie goed kijkt, ziet dat één gezicht nog beweegt.
+
+Laag twee — klank.
+Mijn stem bleef hangen tussen de frequenties.
+Niet alles wat gehoord wordt, reist door lucht.
+(Tip: toegangswachtwoord voor het archief: icfrost2025)
+
+Laag drie — licht.
+Een reeks stilstaande flitsen bewaart de weg.
+Tussen de stiltes gloeit soms één woord.
+
+Laag vier — ritueel.
+Een boom die niet viert, maar wakker maakt.
+Wanneer het juiste ritme klinkt, herkent hij leven.
+
+Laag vijf — stilte.
+Onder elke regel ligt een ademhaling verborgen.
+Sommige ademen vormen een naam.
+
+Laag zes — tijd.
+De laatste seconde blijft open.
+Wie luistert, hoort haar fluisteren:
+awake.
+
+Begin waar schaduwen niet bestaan.
+De toren zonder wijzers.
+
+Soms stopt een klok niet omdat de wereld stilvalt,
+maar omdat iemand besloot dat niets meer mocht bewegen.
+`;
+
+// small extras: words to highlight if you want to show subtle hints
+const highlightWords = ['beeld','klank','licht','ritueel','stilte','tijd','toren','wijzers'];
+
+// typewriter effect
+function typeInto(el, text, speed=24, callback){
+  el.textContent = '';
+  let i=0;
+  function step(){
+    if(i>text.length-1){ if(callback) callback(); return; }
+    el.textContent += text[i];
+    i++;
+    // small delay for newlines
+    let delay = (text[i-1] === '\n') ? speed*2 : speed;
+    setTimeout(step, delay);
+  }
+  step();
+}
+
+const envelope = document.getElementById('envelope');
+const letterArea = document.getElementById('letterArea');
+const letterBody = document.getElementById('letterBody');
+
+let isOpened = false;
+function openEnvelope(){
+  if (isOpened) return;
+  envelope.setAttribute('aria-pressed','true');
+  envelope.classList.add('open');
+  isOpened = true;
+  // reveal letter
+  letterArea.style.display = 'block';
+  // Removed scrollIntoView to allow free scrolling
+  typeInto(letterBody, fullText, 18, ()=>{
+    // append caret
+    const caret = document.createElement('span'); caret.className='caret'; caret.setAttribute('aria-hidden','true');
+    letterBody.appendChild(caret);
+  });
+}
+
+// click or keyboard enter to open
+envelope.addEventListener('click', openEnvelope);
+envelope.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') openEnvelope(); });
+
+window.addEventListener('scroll', () => {
+  const maxScroll = document.body.scrollHeight / 2;
+  if (window.scrollY > maxScroll) {
+    document.body.style.background = 'linear-gradient(180deg, #020204 0%, #0a2a2d 100%)';
+  } else {
+    document.body.style.background = 'linear-gradient(180deg,#020204 0%, #071015 60%)';
+  }
+});
+
+// QR-code tonen wanneer je over de hotspot hovert, verbergen wanneer je niet meer hovert
+const qrHotspot = document.getElementById('qr-hotspot');
+if (qrHotspot) {
+  qrHotspot.addEventListener('mouseenter', () => {
+    document.body.classList.add('show-qr');
+  });
+  qrHotspot.addEventListener('mouseleave', () => {
+    document.body.classList.remove('show-qr');
+  });
+  // ook tonen bij focus (toetsenbordnavigatie)
+  qrHotspot.addEventListener('focus', () => {
+    document.body.classList.add('show-qr');
+  });
+  qrHotspot.addEventListener('blur', () => {
+    document.body.classList.remove('show-qr');
+  });
+}
+</script>
+</body>
+</html>
