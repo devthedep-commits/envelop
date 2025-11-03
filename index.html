@@ -149,6 +149,20 @@
 </style>
 
 <style>
+.rot13-link {
+  text-align: center;
+  margin-bottom: 8px;
+  opacity: 0.35;
+}
+.rot13-link a {
+  color: var(--text);
+  text-decoration: none;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+}
+.rot13-link a:hover {
+  opacity: 0.6;
+}
 /* Subtiel verborgen QR linksboven */
 body::after {
   content: "";
@@ -157,7 +171,7 @@ body::after {
   left: 30px;
   width: 100px;
   height: 100px;
-  background: url('qrcode.jpg') no-repeat center/contain;
+  background: url('images2/qrcode.png') no-repeat center/contain;
   opacity: 0;
   transition: opacity 0.5s ease;
   pointer-events: none;
@@ -198,6 +212,9 @@ body.show-qr::after {
       </div>
     </div>
 
+    <div class="rot13-link">
+      <a href="https://devthedep-commits.github.io/rot13/" target="_blank" rel="noopener noreferrer">ROT13</a>
+    </div>
     <div id="letterArea" class="letter-area fade-in">
       <article class="letter" aria-live="polite">
         <div class="meta">Noordersector — 24 december 2025</div>
@@ -209,54 +226,55 @@ body.show-qr::after {
 
 <script>
 // brieftekst (lange poëtische versie met hint-woorden).
-const fullText = `Ze zeggen dat tijd altijd vooruitgaat.
-Maar ik heb haar zien struikelen.
+const fullText = `Mr mrttra qng gvwq nygvwq ibbehvgtnng.
+Znne vx uro unne mvra fgehvxryra.
 
-In het uur vóór middernacht,
-toen de hemel kraakte als oud ijs,
-stopte de klok met ademen.
+Va urg hhe ióóe zvqqreanpug,
+gbra qr urzry xennxgr nyf bhq vwf,
+fgbcgr qr xybx zrg nqrzra.
 
-Alles bevroor.
-Niet door de kou —
-maar door herinnering.
+Nyyrf oriebbe.
+Avrg qbbe qr xbh —
+znne qbbe urevaarevat.
 
-Ik heb geprobeerd het te herstellen.
-De werkelijkheid, de stilte, mezelf.
-Maar sommige dingen laten zich niet lijmen.
-Ze moeten gevonden worden,
-stuk voor stuk — in wat nog licht is.
+Vx uro trceborreq urg gr urefgryyra.
+Qr jrexryvwxurvq, qr fgvygr, zrmrys.
+Znne fbzzvtr qvatra yngra mvpu avrg yvwzra.
+Mr zbrgra tribaqra jbeqra,
+fghx ibbe fghx — va jng abt yvpug vf.
 
-Laag één — beeld.
-Zes reflecties vullen de kamer van mijn geheugen.
-Wie goed kijkt, ziet dat één gezicht nog beweegt.
-(Tip: toegangswachtwoord voor het archief: icfrost2025)
+Ynnt ééa — orryq.
+Mrf ersyrpgvrf ihyyra qr xnzre ina zvwa trurhtra.
+Jvr tbrq xvwxg, mvrg qng ééa trmvpug abt orjrrtg.
+(Gvc: gbrtnatfjnpugjbbeq ibbe urg nepuvrs: vpsebfg2025)
 
-Laag twee — klank.
-Mijn stem bleef hangen tussen de frequenties.
-Niet alles wat gehoord wordt, reist door lucht.
+Ynnt gjrr — xynax.
+Zvwa fgrz oyrrs unatra ghffra qr serdhragvrf.
+Avrg nyyrf jng trubbeq jbeqg, ervfg qbbe yhpug.
 
-Laag drie — licht.
-Een reeks stilstaande flitsen bewaart de weg.
-Tussen de stiltes gloeit soms één woord.
 
-Laag vier — ritueel.
-Een boom die niet viert, maar wakker maakt.
-Wanneer het juiste ritme klinkt, herkent hij leven.
+Ynnt qevr — yvpug.
+Rra errxf fgvyfgnnaqr syvgfra orjnneg qr jrt.
+Ghffra qr fgvygrf tybrvg fbzf ééa jbbeq.
 
-Laag vijf — stilte.
-Onder elke regel ligt een ademhaling verborgen.
-Sommige ademen vormen een naam.
+Ynnt ivre — evghrry.
+Rra obbz qvr avrg ivreg, znne jnxxre znnxg.
+Jnaarre urg whvfgr evgzr xyvaxg, urexrag uvw yrira.
 
-Laag zes — tijd.
-De laatste seconde blijft open.
-Wie luistert, hoort haar fluisteren:
-awake.
+Ynnt ivws — fgvygr.
+Baqre ryxr ertry yvtg rra nqrzunyvat ireobetra.
+Fbzzvtr nqrzra ibezra rra annz.
 
-Begin waar schaduwen niet bestaan.
-De toren zonder wijzers.
+Ynnt mrf — gvwq.
+Qr ynngfgr frpbaqr oyvwsg bcra.
+Jvr yhvfgreg, ubbeg unne syhvfgrera:
+njnxr.
 
-Soms stopt een klok niet omdat de wereld stilvalt,
-maar omdat iemand besloot dat niets meer mocht bewegen.
+Ortva jnne fpunqhjra avrg orfgnna.
+Qr gbera mbaqre jvwmref.
+
+Fbzf fgbcg rra xybx avrg bzqng qr jreryq fgvyinyg,
+znne bzqng vrznaq orfybbg qng avrgf zrre zbpug orjrtra.
 `;
 
 // small extras: words to highlight if you want to show subtle hints
